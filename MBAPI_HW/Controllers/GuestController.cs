@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MBAPI_HW.Dto.Request;
+using MBAPI_HW.Dto.Response;
+using MBAPI_HW.Services;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -6,38 +10,43 @@ namespace MBAPI_HW.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize(Roles = "SuperUser, User")]
     public class GuestController : ControllerBase
     {
-        // GET: api/<ValuesController>
+        private readonly IGuestService _guestService;
+        public GuestController(IGuestService guestService)
+        {
+            _guestService = guestService;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public GuestResponse GetAllGuests(int page, int pageSize)
         {
-            return new string[] { "value1", "value2" };
+            return _guestService.GetAllGuests(page, pageSize);
+        }
+        [HttpGet]
+        public GuestResponse GetGuestByUserId(string userId)
+        {
+            return _guestService.GetGuestByUserId(userId);
         }
 
-        // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ValuesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [AllowAnonymous]
+        public GuestResponse CreateGuest([FromBody] GuestRequest guestRequest)
         {
+            return _guestService.AddGuest(guestRequest);
         }
 
-        // PUT api/<ValuesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public GuestResponse UpdateGuest([FromBody] GuestRequest guestRequest)
         {
+            return _guestService.UpdateGuest(guestRequest);
         }
 
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        public GuestResponse DeleteGuest(string userId)
         {
+            return _guestService.DeleteGuest(userId);
         }
     }
 }

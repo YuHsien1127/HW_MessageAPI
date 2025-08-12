@@ -16,7 +16,7 @@ namespace MBAPI_HW.Models
         public DateTime CreateDate { get; set; }
         public string CreateUserId { get; set; } = null!;
         public DateTime ModifyDate { get; set; }
-        public string ModifyUserId { get; set; } = null!;
+        public string? ModifyUserId { get; set; }
 
         public virtual ICollection<MessagesHistory> MessagesHistories { get; set; }
     }

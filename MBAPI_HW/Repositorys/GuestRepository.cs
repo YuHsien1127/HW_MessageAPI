@@ -2,7 +2,7 @@
 
 namespace MBAPI_HW.Repositorys
 {
-    public class GuestRepository : IGuestReposiory
+    public class GuestRepository : IGuestRepository
     {
         private readonly MessageSQLContext _messageSQLContext;
         public GuestRepository(MessageSQLContext messageSQLContext)
@@ -17,6 +17,10 @@ namespace MBAPI_HW.Repositorys
         public Guest GetGuestByUserId(string userId)
         {
             return _messageSQLContext.Guests.FirstOrDefault(g => g.UserId == userId);
+        }
+        public Guest GetGuestById(int id)
+        {
+            return _messageSQLContext.Guests.Find(id);
         }
 
         public void AddGuest(Guest guest)
