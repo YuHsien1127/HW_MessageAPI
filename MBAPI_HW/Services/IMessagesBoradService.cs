@@ -8,6 +8,7 @@ namespace MBAPI_HW.Services
     {
         public MessagesBoradResponse GetAllMessagesBorad(int page, int pageSize);
         public MessagesBoradResponse GetMessagesBoradById(int id);
+        //public MessagesBoradResponse GetMessagesByUserId(string userId);
         
         // MessagesBorad add/update/delete
         public MessagesBoradResponse AddMessagesBorad(MessagesBoradRequest messagesBoradRequest);

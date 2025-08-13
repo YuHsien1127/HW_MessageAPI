@@ -14,14 +14,12 @@ namespace MBAPI_HW.Services
         private readonly MessageSQLContext _messageSQLContext;
         private readonly ILogger<MessagesBoradService> _logger;
         private readonly IMessagesBoradRepository _messagesBoradRepository;
-        private readonly IGuestRepository _guestRepository;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        public MessagesBoradService(MessageSQLContext messageSQLContext, ILogger<MessagesBoradService> logger, IMessagesBoradRepository messagesBoradRepository, IGuestRepository guestRepository, IHttpContextAccessor HttpContextAccessor)
+        public MessagesBoradService(MessageSQLContext messageSQLContext, ILogger<MessagesBoradService> logger, IMessagesBoradRepository messagesBoradRepository, IHttpContextAccessor HttpContextAccessor)
         {
             _messageSQLContext = messageSQLContext;
             _logger = logger;
             _messagesBoradRepository = messagesBoradRepository;
-            _guestRepository = guestRepository;
             _HttpContextAccessor = HttpContextAccessor;
         }
 
@@ -32,6 +30,8 @@ namespace MBAPI_HW.Services
 
             var messagesBorad = _messagesBoradRepository.GetAllMessagesBorad();
             _logger.LogDebug("【Debug】取得MessagesBorad數量：{Count}", messagesBorad.Count());
+            // 從 Claims 取出 UserId
+            // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
             var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
             var m = messagesBorad.Select(x => new MessagesBoradDto
             {
@@ -76,6 +76,8 @@ namespace MBAPI_HW.Services
                 response.Message = "無此Id留言";
                 return response;
             }
+            // 從 Claims 取出 UserId
+            // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
             var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
             var m = new MessagesBoradDto
             {
@@ -124,7 +126,7 @@ namespace MBAPI_HW.Services
                 }
                 // 從 Claims 取出 UserId
                 // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
-                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("User")?.Value;
                 _logger.LogTrace("【Trace】開始建立留言板");
                 var messagesBorad = new MessagesBorad
                 {
@@ -185,6 +187,8 @@ namespace MBAPI_HW.Services
                     response.Message = "更新資料Id錯誤";
                     return response;
                 }
+                // 從 Claims 取出 UserId
+                // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
                 var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
                 existMessagesBorad.Subject = messageBoradRequest.Subject == "" ? existMessagesBorad.Subject : messageBoradRequest.Subject;
                 existMessagesBorad.Decription = messageBoradRequest.Decription == "" ? existMessagesBorad.Decription : messageBoradRequest.Decription;
@@ -271,6 +275,8 @@ namespace MBAPI_HW.Services
                     response.Message = "新增項目為空";
                     return response;
                 }
+                // 從 Claims 取出 UserId
+                // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
                 var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
                 // 沒有登入
                 if(string.IsNullOrEmpty(userId))
