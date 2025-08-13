@@ -11,7 +11,7 @@ namespace MBAPI_HW.Models
         public bool IsDel { get; set; }
         public bool IsMark { get; set; }
         public DateTime CreateDate { get; set; }
-        public string? CreateUserId { get; set; }
+        public string CreateUserId { get; set; } = null!;
 
         public virtual MessagesBorad Mb { get; set; } = null!;
     }

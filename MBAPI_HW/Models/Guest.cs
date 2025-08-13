@@ -9,7 +9,7 @@ namespace MBAPI_HW.Models
         public string UserId { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string Role { get; set; } = null!;
-        public DateTime? CreateDate { get; set; }
-        public DateTime? ModifyDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime ModifyDate { get; set; }
     }
 }

@@ -29,20 +29,17 @@ namespace MBAPI_HW.Controllers
         {
             return _guestService.GetGuestByUserId(userId);
         }
-
         [HttpPost]
         [AllowAnonymous]
         public GuestResponse CreateGuest([FromBody] GuestRequest guestRequest)
         {
             return _guestService.AddGuest(guestRequest);
         }
-
         [HttpPut]
         public GuestResponse UpdateGuest([FromBody] GuestRequest guestRequest)
         {
             return _guestService.UpdateGuest(guestRequest);
         }
-
         [HttpDelete]
         public GuestResponse DeleteGuest(string userId)
         {

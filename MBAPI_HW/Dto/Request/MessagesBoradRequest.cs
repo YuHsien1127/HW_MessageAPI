@@ -14,5 +14,6 @@
         public string Message { get; set; } = "";
         public bool IsDel { get; set; } = false;
         public bool IsMark { get; set; } = false;
+        public string? CreateUserId { get; set; }
     }
 }

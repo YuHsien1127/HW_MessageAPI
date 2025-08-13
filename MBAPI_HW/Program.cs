@@ -10,7 +10,7 @@ using NLog;
 using NLog.Web;
 using MicrosoftLogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-
+// Log
 LogManager.Setup().LoadConfigurationFromAppSettings();
 var logger = LogManager.GetCurrentClassLogger();
 
@@ -32,11 +32,12 @@ builder.Services.AddSwaggerGen();
 // µù¥U DbContext
 builder.Services.AddDbContext<MessageSQLContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGuestRepository, GuestRepository>();
 builder.Services.AddScoped<IGuestService, GuestService>();
 builder.Services.AddScoped<IMessagesBoradRepository, MessagesBoradRepository>();
-//builder.Services.AddScoped<IMessagesBoradService, MessagesBoradService>();
+builder.Services.AddScoped<IMessagesBoradService, MessagesBoradService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);

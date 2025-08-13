@@ -31,7 +31,6 @@ namespace MBAPI_HW.Services
 
             var g = guests.Select(x => new GuestDto
             {
-                Id = x.Id,
                 UserId = x.UserId,
                 Role = x.Role
             });
@@ -65,7 +64,6 @@ namespace MBAPI_HW.Services
             }
             var g = new GuestDto
             {
-                Id = guests.Id,
                 UserId = guests.UserId,
                 Role = guests.Role
             };
@@ -92,18 +90,18 @@ namespace MBAPI_HW.Services
                     response.Message = "新增Guest資料為空";
                     return response;
                 }
-                _logger.LogDebug("【Debug】接收到新增顧客資料（UserId：{guestRequest.UserId},Role：{UserId, guestRequest.Role}", guestRequest.UserId, guestRequest.Role);
+                _logger.LogDebug("【Debug】接收到新增顧客資料（UserId：{guestRequest.UserId},Role：{guestRequest.Role}", guestRequest.UserId, guestRequest.Role);
                 var guest = new Guest
-                {
-                    UserId = guestRequest.UserId,
+                {                    
                     Password = guestRequest.Password,
                     Role = guestRequest.Role,
-                    CreateDate = DateTime.Now
+                    CreateDate = DateTime.Now,
+                    ModifyDate = DateTime.Now,
+
                 };
                 _guestRepository.AddGuest(guest);
                 var q = new GuestDto
                 {
-                    Id = guest.Id,
                     UserId = guestRequest.UserId,
                     Role = guestRequest.Role
                 };
@@ -208,6 +206,7 @@ namespace MBAPI_HW.Services
                 existGuest.UserId = guestRequest.UserId == "" ? existGuest.UserId : guestRequest.UserId;
                 existGuest.Password = guestRequest.Password == "" ? existGuest.Password : guestRequest.Password;
                 existGuest.ModifyDate = DateTime.Now;
+                _guestRepository.UpdateGuest(existGuest);
                 _logger.LogDebug("【Debug】更新後的資料（UserId：{request.Account},Password：{request.Name}）", guestRequest.UserId, guestRequest.Password);
                 int count = _messageSQLContext.SaveChanges();
                 if (count > 0)

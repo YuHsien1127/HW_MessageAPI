@@ -11,13 +11,13 @@ namespace MBAPI_HW.Repositorys
         public MessagesBorad GetMessagesBoradById(int id);
         public void AddMessagesBorad(MessagesBorad messagesBorad);
         public void UpdateMessagesBorad(MessagesBorad messageBorad);
-        public void DeleteMessagesBoradById(MessagesBorad messageBorad);
+        public void DeleteMessagesBorad(MessagesBorad messageBorad);
 
         // MessagesHistory
         public IQueryable<MessagesHistory> GetAllMessagesHistory();
         public MessagesHistory GetMessagesHistoryById(int id);
         public void AddMessagesHistory(MessagesHistory messagesHistory);
         public void UpdateMessagesHistory(MessagesHistory messagesHistory);
-        public void DeleteMessagesHistoryById(MessagesHistory messagesHistory);
+        public void DeleteMessagesHistory(MessagesHistory messagesHistory);
     }
 }

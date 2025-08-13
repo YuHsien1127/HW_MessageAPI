@@ -8,8 +8,15 @@ namespace MBAPI_HW.Services
     {
         public MessagesBoradResponse GetAllMessagesBorad(int page, int pageSize);
         public MessagesBoradResponse GetMessagesBoradById(int id);
+        
+        // MessagesBorad add/update/delete
         public MessagesBoradResponse AddMessagesBorad(MessagesBoradRequest messagesBoradRequest);
         public MessagesBoradResponse UpdateMessagesBorad(MessagesBoradRequest messageBoradRequest);
         public MessagesBoradResponse DeleteMessagesBorad(int id);
+
+        // MessagesHistory add/update/delete
+        public MessagesBoradResponse AddMessagesHistory(MessageHistoryRequest messagesHistoryRequest);
+        public MessagesBoradResponse UpdateMessagesHistory(MessageHistoryRequest messagesHistoryRequest);
+        public MessagesBoradResponse DeleteMessagesHistory(int id);
     }
 }

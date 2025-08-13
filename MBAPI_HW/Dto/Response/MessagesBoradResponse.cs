@@ -13,7 +13,7 @@
         public string? Decription { get; set; }
         public DateTime CreateDate { get; set; }
         public string CreateUserId { get; set; } = "";
-        public DateTime ModifyDate { get; set; }
+        public DateTime? ModifyDate { get; set; }
         public string? ModifyUserId { get; set; }
         public List<MessageHistoryDTO> MessageHistories { get; set; } = new List<MessageHistoryDTO>();
     }

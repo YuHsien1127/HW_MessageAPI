@@ -26,7 +26,7 @@ namespace MBAPI_HW.Repositorys
             _messageSQLContext.Add(messagesBorad);
         }
 
-        public void DeleteMessagesBoradById(MessagesBorad messageBorad)
+        public void DeleteMessagesBorad(MessagesBorad messageBorad)
         {
             _messageSQLContext.Remove(messageBorad);
         }        
@@ -57,7 +57,7 @@ namespace MBAPI_HW.Repositorys
             _messageSQLContext.Update(messagesHistory);
         }
 
-        public void DeleteMessagesHistoryById(MessagesHistory messagesHistory)
+        public void DeleteMessagesHistory(MessagesHistory messagesHistory)
         {
             throw new NotImplementedException();
         }
