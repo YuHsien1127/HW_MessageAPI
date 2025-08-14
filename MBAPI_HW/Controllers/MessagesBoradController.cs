@@ -29,6 +29,11 @@ namespace MBAPI_HW.Controllers
         {
             return _messagesBoradService.GetMessagesBoradById(id);
         }
+        [HttpGet]
+        public MessagesBoradResponse GetMessagesByUserId(string userId, DateTime startDate, DateTime endDate, int page, int pageSize)
+        {
+            return _messagesBoradService.GetMessagesByUserId(userId, startDate, endDate, page, pageSize);
+        }
 
         // MessagesBorad
         [HttpPost]        

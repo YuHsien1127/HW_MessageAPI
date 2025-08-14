@@ -2,10 +2,8 @@
 using MBAPI_HW.Dto.Response;
 using MBAPI_HW.Models;
 using MBAPI_HW.Repositorys;
-using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using X.PagedList.Extensions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MBAPI_HW.Services
 {
@@ -32,7 +30,7 @@ namespace MBAPI_HW.Services
             _logger.LogDebug("【Debug】取得MessagesBorad數量：{Count}", messagesBorad.Count());
             // 從 Claims 取出 UserId
             // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
-            var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var m = messagesBorad.Select(x => new MessagesBoradDto
             {
                 Id = x.Id,
@@ -47,7 +45,7 @@ namespace MBAPI_HW.Services
                     {
                         Id = y.Id,
                         Mbid = y.Mbid,
-                        Message = (y.IsMark && y.CreateUserId != userId) ? "無權限觀看此流言"  : (y.IsDel ? "已刪除" : y.Message),
+                        Message = (y.IsMark && y.CreateUserId != userId) ? "無權限觀看此流言" : (y.IsDel ? "已刪除" : y.Message),
                         IsDel = y.IsDel,
                         IsMark = y.IsMark,
                         CreateDate = y.CreateDate,
@@ -78,7 +76,7 @@ namespace MBAPI_HW.Services
             }
             // 從 Claims 取出 UserId
             // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
-            var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var m = new MessagesBoradDto
             {
                 Id = messagesBorad.Id,
@@ -107,7 +105,58 @@ namespace MBAPI_HW.Services
             _logger.LogInformation("【Info】成功查詢留言板Id({id})及其 {Count} 筆留言", id, messagesBorad.MessagesHistories.Count);
             _logger.LogTrace("【Trace】離開GetMessagesBoradById");
             return response;
+        }
+        // 用 userId 依據起訖日 (startDate/endDate) 來抓 userId 所有的留言，並做分頁
+        public MessagesBoradResponse GetMessagesByUserId(string userId, DateTime startDate, DateTime endDate, int page, int pageSize)
+        {
+            _logger.LogTrace("【Trace】進入GetMessagesByUserId，UserId：{userId}, StartDate：{startDate}, EndDate：{endDate}", userId, startDate, endDate);
+            MessagesBoradResponse response = new MessagesBoradResponse();
 
+            if (userId == null)
+            {
+                _logger.LogWarning("【Warning】UserId為空", userId);
+                response.Success = false;
+                response.Message = "UserId為空";
+                return response;
+            }
+            var authUserId = _HttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            _logger.LogDebug("【Debug】登入使用者 AuthUserId：{authUserId}", authUserId);
+            var messages = _messagesBoradRepository.GetAllMessagesBorad()
+                .Where(m => m.MessagesHistories
+                .Any(h => h.CreateUserId == userId && m.CreateDate.Date >= startDate.Date && m.CreateDate.Date <= endDate.Date));
+                // .Date 忽略時間，只比對日期
+            _logger.LogDebug("【Debug】找到 {count} 筆符合條件的留言板", messages.Count());
+            var m = messages.Select(x => new MessagesBoradDto
+            {
+                Id = x.Id,
+                Subject = x.Subject,
+                Decription = x.Decription,
+                CreateDate = x.CreateDate,
+                CreateUserId = x.CreateUserId,
+                ModifyDate = x.ModifyDate,
+                ModifyUserId = x.ModifyUserId,
+                MessageHistories = x.MessagesHistories
+                    .Where(y => y.CreateUserId == userId)
+                    .Select(z => new MessageHistoryDTO
+                    {
+                        Id = z.Id,
+                        Mbid = z.Mbid,
+                        Message = (z.IsMark && z.CreateUserId != authUserId) ? "無權限觀看此流言" : (z.IsDel ? "已刪除" : z.Message),
+                        IsDel = z.IsDel,
+                        IsMark = z.IsMark,
+                        CreateDate = z.CreateDate,
+                        CreateUserId = z.CreateUserId
+                    }).ToList()
+            });
+            var pagedList = m.ToPagedList(page, pageSize);
+
+            response.MessagesBorad = pagedList.ToList();
+            response.PageCount = pagedList.PageCount;
+            response.TotalCount = pagedList.TotalItemCount;
+            response.Success = true;
+            response.Message = $"取得第{page}頁，{pageSize}筆資料";
+            _logger.LogTrace("【Trace】離開AddGetMessagesByUserId");
+            return response;
         }
 
         // MessagesBorad
@@ -125,17 +174,17 @@ namespace MBAPI_HW.Services
                     return response;
                 }
                 // 從 Claims 取出 UserId
-                // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
-                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("User")?.Value;
+                // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims） 
+                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 _logger.LogTrace("【Trace】開始建立留言板");
                 var messagesBorad = new MessagesBorad
                 {
                     Subject = messagesBoradRequest.Subject,
                     Decription = messagesBoradRequest.Decription,
                     CreateDate = DateTime.Now,
-                    CreateUserId = userId,
+                    CreateUserId = userId == null ? "isNull" : userId,
                     ModifyDate = DateTime.Now,
-                    ModifyUserId = userId
+                    ModifyUserId = userId == null ? "isNull" : userId,
                 };
                 _logger.LogDebug("【Debug】準備新增留言板：{Id}", messagesBorad.Id);
                 _logger.LogTrace("【Trace】建立留言板完成，Id：{Id}", messagesBorad.Id);
@@ -189,7 +238,7 @@ namespace MBAPI_HW.Services
                 }
                 // 從 Claims 取出 UserId
                 // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
-                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 existMessagesBorad.Subject = messageBoradRequest.Subject == "" ? existMessagesBorad.Subject : messageBoradRequest.Subject;
                 existMessagesBorad.Decription = messageBoradRequest.Decription == "" ? existMessagesBorad.Decription : messageBoradRequest.Decription;
                 existMessagesBorad.ModifyDate = DateTime.Now;
@@ -259,7 +308,7 @@ namespace MBAPI_HW.Services
             _logger.LogTrace("【Trace】離開DeleteMessagesBorad");
             return response;
         }
-        
+
         // MessagesHietory
         public MessagesBoradResponse AddMessagesHistory(MessageHistoryRequest messagesHistoryRequest)
         {
@@ -277,9 +326,9 @@ namespace MBAPI_HW.Services
                 }
                 // 從 Claims 取出 UserId
                 // HttpContext.User 是一個 ClaimsPrincipal 物件，存放登入使用者的身分資訊（Claims）
-                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+                var userId = _HttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 // 沒有登入
-                if(string.IsNullOrEmpty(userId))
+                if (string.IsNullOrEmpty(userId))
                 {
                     userId = $"{messagesHistoryRequest.CreateUserId}_{Guid.NewGuid().ToString("N")}";
                     _logger.LogDebug("【Debug】匿名留言使用代號：{userId}", userId);

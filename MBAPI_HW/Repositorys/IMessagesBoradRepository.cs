@@ -1,6 +1,4 @@
-﻿using MBAPI_HW.Dto.Request;
-using MBAPI_HW.Dto.Response;
-using MBAPI_HW.Models;
+﻿using MBAPI_HW.Models;
 
 namespace MBAPI_HW.Repositorys
 {

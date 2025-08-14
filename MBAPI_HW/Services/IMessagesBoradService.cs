@@ -1,6 +1,5 @@
 ﻿using MBAPI_HW.Dto.Request;
 using MBAPI_HW.Dto.Response;
-using MBAPI_HW.Models;
 
 namespace MBAPI_HW.Services
 {
@@ -8,7 +7,8 @@ namespace MBAPI_HW.Services
     {
         public MessagesBoradResponse GetAllMessagesBorad(int page, int pageSize);
         public MessagesBoradResponse GetMessagesBoradById(int id);
-        //public MessagesBoradResponse GetMessagesByUserId(string userId);
+        // 用 userId 依 startDate 來查詢留言
+        public MessagesBoradResponse GetMessagesByUserId(string userId, DateTime startDate, DateTime endDate, int page, int pageSize);
         
         // MessagesBorad add/update/delete
         public MessagesBoradResponse AddMessagesBorad(MessagesBoradRequest messagesBoradRequest);

@@ -2,9 +2,6 @@
 using MBAPI_HW.Dto.Response;
 using MBAPI_HW.Models;
 using MBAPI_HW.Repositorys;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Security.Principal;
 using X.PagedList.Extensions;
 
 namespace MBAPI_HW.Services
@@ -92,7 +89,8 @@ namespace MBAPI_HW.Services
                 }
                 _logger.LogDebug("【Debug】接收到新增顧客資料（UserId：{guestRequest.UserId},Role：{guestRequest.Role}", guestRequest.UserId, guestRequest.Role);
                 var guest = new Guest
-                {                    
+                {
+                    UserId = guestRequest.UserId,
                     Password = guestRequest.Password,
                     Role = guestRequest.Role,
                     CreateDate = DateTime.Now,

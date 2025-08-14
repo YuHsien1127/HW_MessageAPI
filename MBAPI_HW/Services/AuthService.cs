@@ -31,7 +31,6 @@ namespace MBAPI_HW.Services
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId), // Sub：主體（這裡用帳號代表使用者身分）
-                new Claim("UserId", userId), // 自訂欄位，存放使用者帳號或ID
                 new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
