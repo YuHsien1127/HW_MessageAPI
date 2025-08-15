@@ -38,6 +38,7 @@ builder.Services.AddScoped<IGuestRepository, GuestRepository>();
 builder.Services.AddScoped<IGuestService, GuestService>();
 builder.Services.AddScoped<IMessagesBoradRepository, MessagesBoradRepository>();
 builder.Services.AddScoped<IMessagesBoradService, MessagesBoradService>();
+builder.Services.AddScoped<IExcelMessagesHistoryService, ExcelMessagesHistoryService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);

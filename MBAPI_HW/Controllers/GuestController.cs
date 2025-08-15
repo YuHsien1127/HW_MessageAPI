@@ -20,7 +20,7 @@ namespace MBAPI_HW.Controllers
         }
 
         [HttpGet]
-        public GuestResponse GetAllGuests(int page, int pageSize)
+        public GuestResponse GetAllGuests(int page = 1, int pageSize = 10)
         {
             return _guestService.GetAllGuests(page, pageSize);
         }

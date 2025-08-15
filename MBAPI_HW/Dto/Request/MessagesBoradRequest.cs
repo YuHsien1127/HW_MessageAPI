@@ -11,9 +11,7 @@
     {
         public int Id { get; set; }
         public int Mbid { get; set; }
-        public string Message { get; set; } = "";
-        public bool IsDel { get; set; } = false;
-        public bool IsMark { get; set; } = false;
+        public string Message { get; set; }
         public string? CreateUserId { get; set; }
     }
 }

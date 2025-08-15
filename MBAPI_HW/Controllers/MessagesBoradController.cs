@@ -19,24 +19,35 @@ namespace MBAPI_HW.Controllers
             _messagesBoradService = messagesBoradService;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet]
-        public MessagesBoradResponse GetAllMessagesBorad(int page, int pageSize)
+        public MessagesBoradResponse GetAllMessagesBorad(int page = 1, int pageSize = 10)
         {
             return _messagesBoradService.GetAllMessagesBorad(page, pageSize);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public MessagesBoradResponse GetMessagesBoradById(int id)
         {
             return _messagesBoradService.GetMessagesBoradById(id);
         }
         [HttpGet]
-        public MessagesBoradResponse GetMessagesByUserId(string userId, DateTime startDate, DateTime endDate, int page, int pageSize)
+        public MessagesBoradResponse GetMessagesByUserId(string userId, DateTime startDate, DateTime endDate, int page = 1, int pageSize = 10)
         {
             return _messagesBoradService.GetMessagesByUserId(userId, startDate, endDate, page, pageSize);
         }
 
         // MessagesBorad
-        [HttpPost]        
+        [HttpPost]
         public MessagesBoradResponse AddMessagesBorad([FromBody] MessagesBoradRequest messagesBoradRequest)
         {
             return _messagesBoradService.AddMessagesBorad(messagesBoradRequest);

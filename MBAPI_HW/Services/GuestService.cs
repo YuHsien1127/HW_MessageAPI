@@ -44,7 +44,7 @@ namespace MBAPI_HW.Services
             _logger.LogTrace("【Trace】進入GetGuestByUserId");
             GuestResponse response = new GuestResponse();
 
-            if(userId == "")
+            if(string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("【Warning】UserId為空");
                 response.Success = false;
@@ -136,7 +136,7 @@ namespace MBAPI_HW.Services
 
             try
             {
-                if(userId == "")
+                if(string.IsNullOrEmpty(userId))
                 {
                     _logger.LogWarning("【Warning】UserId為空");
                     response.Success = false;

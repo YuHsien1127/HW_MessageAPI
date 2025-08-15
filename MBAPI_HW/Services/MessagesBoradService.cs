@@ -65,7 +65,15 @@ namespace MBAPI_HW.Services
         public MessagesBoradResponse GetMessagesBoradById(int id)
         {
             _logger.LogTrace("【Trace】進入GetMessagesBoradById");
+
             MessagesBoradResponse response = new MessagesBoradResponse();
+            if (id == 0)
+            {
+                _logger.LogWarning("【Warning】Id為空");
+                response.Success = false;
+                response.Message = "Id為空";
+                return response;
+            }
             var messagesBorad = _messagesBoradRepository.GetMessagesBoradById(id);
             if (messagesBorad == null)
             {
@@ -106,25 +114,28 @@ namespace MBAPI_HW.Services
             _logger.LogTrace("【Trace】離開GetMessagesBoradById");
             return response;
         }
-        // 用 userId 依據起訖日 (startDate/endDate) 來抓 userId 所有的留言，並做分頁
+        // 用 userId 依據起訖日 (startDate/endDate) 來抓 userId 所有的留言，並做分頁顯示
         public MessagesBoradResponse GetMessagesByUserId(string userId, DateTime startDate, DateTime endDate, int page, int pageSize)
         {
             _logger.LogTrace("【Trace】進入GetMessagesByUserId，UserId：{userId}, StartDate：{startDate}, EndDate：{endDate}", userId, startDate, endDate);
             MessagesBoradResponse response = new MessagesBoradResponse();
-
-            if (userId == null)
+            
+            if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("【Warning】UserId為空", userId);
                 response.Success = false;
                 response.Message = "UserId為空";
                 return response;
             }
+            if (startDate == default) startDate = new DateTime(1753, 1, 1);
+            if (endDate == default) endDate = DateTime.Now;
+
             var authUserId = _HttpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             _logger.LogDebug("【Debug】登入使用者 AuthUserId：{authUserId}", authUserId);
             var messages = _messagesBoradRepository.GetAllMessagesBorad()
                 .Where(m => m.MessagesHistories
                 .Any(h => h.CreateUserId == userId && m.CreateDate.Date >= startDate.Date && m.CreateDate.Date <= endDate.Date));
-                // .Date 忽略時間，只比對日期
+            // .Date 忽略時間，只比對日期
             _logger.LogDebug("【Debug】找到 {count} 筆符合條件的留言板", messages.Count());
             var m = messages.Select(x => new MessagesBoradDto
             {
@@ -275,6 +286,13 @@ namespace MBAPI_HW.Services
 
             try
             {
+                if (id == 0)
+                {
+                    _logger.LogWarning("【Warning】Id為空");
+                    response.Success = false;
+                    response.Message = "Id為空";
+                    return response;
+                }
                 var deleteMessageBorad = _messagesBoradRepository.GetMessagesBoradById(id);
                 if (deleteMessageBorad == null)
                 {
@@ -338,7 +356,6 @@ namespace MBAPI_HW.Services
                 {
                     Mbid = messagesHistoryRequest.Mbid,
                     Message = messagesHistoryRequest.Message,
-                    IsMark = messagesHistoryRequest.IsMark,
                     CreateDate = DateTime.Now,
                     CreateUserId = userId
                 };
@@ -393,7 +410,6 @@ namespace MBAPI_HW.Services
                     return response;
                 }
                 existMessagesHistory.Message = messagesHistoryRequest.Message == "" ? existMessagesHistory.Message : messagesHistoryRequest.Message;
-                existMessagesHistory.IsMark = messagesHistoryRequest.IsMark;
                 _messagesBoradRepository.UpdateMessagesHistory(existMessagesHistory);
 
                 int count = _messageSQLContext.SaveChanges();
@@ -426,6 +442,13 @@ namespace MBAPI_HW.Services
 
             try
             {
+                if (id == 0)
+                {
+                    _logger.LogWarning("【Warning】Id為空");
+                    response.Success = false;
+                    response.Message = "Id為空";
+                    return response;
+                }
                 var deleteMessagesHistory = _messagesBoradRepository.GetMessagesHistoryById(id);
                 if (deleteMessagesHistory == null)
                 {
